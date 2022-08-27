@@ -1,6 +1,13 @@
 const express = require('express')
+const { restart } = require('nodemon')
 const app = express()
-const port= 3000
+const port= 3001
+
+// we are importing middleware
+const middleware = require('./utilities/middleware')
+
+app.use(express.json())
+app.use(middleware.requestlogger)
 
 app.get('/', function (req, res) {
   res.send('Hello World')
@@ -65,6 +72,27 @@ const me =
 
        }
 
+       // today adjustment start here
+       let users = [
+       {
+           id: 1,
+           username: 'camara',
+           phone: '341262',
+           password: 'shiddiq',
+         
+       },
+
+       {
+        
+        id: 2,
+        username: 'kebba',
+        phone: '3412374',
+        password: 'kebz',
+      
+    }
+         
+       ]
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -72,6 +100,71 @@ app.get('/', (req, res) => {
 
 app.get('/me', (req, res) => {
   res.json(me)
+})
+
+
+// step2 for today 
+
+// implementation for all users we are getting all users
+app.get('/api/users', (req, res)=> {
+
+res.json(users)
+
+
+  
+  // if you want error 404 to show if user id is not found
+
+  //if (user){
+    //res.json(user)
+
+  //} else {
+    //res.status(404).end()
+  //}
+
+} );
+
+// implementation for getone we are getting one user
+app.get('/api/users/:id', (req ,res) =>{
+  const id = req.params.id
+  const user = users.find((user) => user.id === Number (id))
+  res.json(users)
+})
+
+
+
+//HOW TO DELETE
+// implementation for delete
+  app.delete('/api/users/:id', (req, res) => {
+  const id = req.params.id
+  users = users.filter((user) => user.id !== Number(id))
+
+  res.status(204).end()
+
+})
+//  end here
+
+
+// how we can add a new user to your systemm
+
+app.post('/api/users' , (req, res) => {
+  const content = req.body
+
+  // here we are saving the data to database
+  
+  console.log(content);
+  res.json(content)
+})
+
+
+// this pop up when user try to find something that is not in your website
+
+app.use(middleware.unknownEndpoint)
+
+// we want to update 
+app.put('/api/users/:id', (req, res) =>{
+  const id = req.params.id
+  res.id
+
 })
 
 app.listen(port, () => {
